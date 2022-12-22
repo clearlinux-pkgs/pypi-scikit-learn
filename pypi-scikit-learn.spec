@@ -24,6 +24,7 @@ BuildRequires : pypi(setuptools)
 BuildRequires : pypi(threadpoolctl)
 BuildRequires : pypi(wheel)
 Provides: scikit-learn
+Provides: scikit-learn-python3
 
 %description
 This directory contains bundled external dependencies that are updated
