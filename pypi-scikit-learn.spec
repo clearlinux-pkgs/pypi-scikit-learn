@@ -4,7 +4,7 @@
 #
 Name     : pypi-scikit-learn
 Version  : 1.2.0
-Release  : 1
+Release  : 2
 URL      : https://files.pythonhosted.org/packages/27/a0/95eae31ceabeb7710a694367816edfcc0ccb001c794c14b3b234c148ae50/scikit-learn-1.2.0.tar.gz
 Source0  : https://files.pythonhosted.org/packages/27/a0/95eae31ceabeb7710a694367816edfcc0ccb001c794c14b3b234c148ae50/scikit-learn-1.2.0.tar.gz
 Summary  : A set of python modules for machine learning and data mining
@@ -91,7 +91,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1671722347
+export SOURCE_DATE_EPOCH=1671729759
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -108,6 +108,15 @@ export CXXFLAGS="$CXXFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3 "
 export FFLAGS="$FFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3 "
 export FCFLAGS="$FCFLAGS -m64 -march=x86-64-v3 "
 export LDFLAGS="$LDFLAGS -m64 -march=x86-64-v3 "
+python3 -m build --wheel --skip-dependency-check --no-isolation
+
+popd
+pushd ../buildavx512/
+export CFLAGS="$CFLAGS -m64 -march=x86-64-v4 -Wl,-z,x86-64-v4 -msse2avx "
+export CXXFLAGS="$CXXFLAGS -m64 -march=x86-64-v4 -Wl,-z,x86-64-v4 "
+export FFLAGS="$FFLAGS -m64 -march=x86-64-v4 -Wl,-z,x86-64-v4 "
+export FCFLAGS="$FCFLAGS -m64 -march=x86-64-v4 "
+export LDFLAGS="$LDFLAGS -m64 -march=x86-64-v4 "
 python3 -m build --wheel --skip-dependency-check --no-isolation
 
 popd
@@ -130,7 +139,16 @@ export FCFLAGS="$FCFLAGS -m64 -march=x86-64-v3 "
 export LDFLAGS="$LDFLAGS -m64 -march=x86-64-v3 "
 pip install --root=%{buildroot}-v3 --no-deps --ignore-installed dist/*.whl
 popd
+pushd ../buildavx512/
+export CFLAGS="$CFLAGS -m64 -march=x86-64-v4 -Wl,-z,x86-64-v4 "
+export CXXFLAGS="$CXXFLAGS -m64 -march=x86-64-v4 -Wl,-z,x86-64-v4 "
+export FFLAGS="$FFLAGS -m64 -march=x86-64-v4 -Wl,-z,x86-64-v4 "
+export FCFLAGS="$FCFLAGS -m64 -march=x86-64-v4 "
+export LDFLAGS="$LDFLAGS -m64 -march=x86-64-v4 "
+pip install --root=%{buildroot}-v4 --no-deps --ignore-installed dist/*.whl
+popd
 /usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot} %{buildroot}/usr/share/clear/filemap/filemap-%{name}
+/usr/bin/elf-move.py avx512 %{buildroot}-v4 %{buildroot} %{buildroot}/usr/share/clear/filemap/filemap-%{name}
 
 %files
 %defattr(-,root,root,-)
